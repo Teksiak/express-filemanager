@@ -18,7 +18,7 @@ app.engine('hbs', hbs({
 const context = {}
 
 app.get("/", (req, res) => {
-    res.render('main.hbs', context);
+    res.render('index.hbs', context);
 })
 
 app.use(express.static('static'))
