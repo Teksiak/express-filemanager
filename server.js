@@ -6,8 +6,27 @@ const hbs = require("express-handlebars");
 
 const app = express();
 const PORT = 5000;
-const fileExtensions =
-    "cssdirdocexegifhtmljpgjsmp3mp4pdfphppngpssqlsvgtxtxmlzip";
+const fileExtensions = [
+    "css",
+    "dir",
+    "doc",
+    "exe",
+    "gif",
+    "html",
+    "jpg",
+    "js",
+    "mp3",
+    "mp4",
+    "pdf",
+    "php",
+    "png",
+    "ps",
+    "sql",
+    "svg",
+    "txt",
+    "xml",
+    "zip",
+];
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("static"));
@@ -32,22 +51,50 @@ app.engine(
 );
 
 const uploadPath = path.join(__dirname, "upload");
+var currentPath = path.join(__dirname, "upload");
 if (!fs.existsSync(uploadPath)) {
     fs.mkdirSync(uploadPath);
 }
 
-const getFiles = (path) => {
+const getFiles = (newPath) => {
     const data = { dirs: [], files: [] };
-    fs.readdirSync(path, { withFileTypes: true }).map((e) => {
-        e.isDirectory() ? data.dirs.push(e.name) : data.files.push(e.name);
+    fs.readdirSync(newPath, { withFileTypes: true }).map((e) => {
+        e.isDirectory()
+            ? data.dirs.push({
+                  name: e.name,
+                  path: path.join(newPath, e.name).split("\\upload\\")[1],
+              })
+            : data.files.push(e.name);
     });
+    return data;
+};
+
+const getPathArray = (newPath) => {
+    const data = [];
+    newPath = newPath.split("\\upload\\")[1];
+    if (newPath) {
+        newPath = newPath.split("\\");
+        newPath
+            .slice()
+            .reverse()
+            .map((el) => {
+                const totalPath = {
+                    name: el,
+                    path: path.join.apply(null, newPath).replace("\\", "/"),
+                };
+                data.push(totalPath);
+                newPath.pop();
+            });
+    }
+    data.push({ name: "Home", path: "/" });
+    data.reverse();
     console.log(data);
     return data;
 };
 
 /*Add the (number) to the file when it already exists*/
 const fixFileName = (fileName, dir) => {
-    var newPath = path.join(uploadPath, fileName);
+    var newPath = path.join(currentPath, fileName);
     var newName = fileName.split(".")[0];
     var fileExt = fileName.split(".")[1] || "";
     var i = 0;
@@ -62,7 +109,7 @@ const fixFileName = (fileName, dir) => {
         } else {
             if (newName.at(-3) == "(" && newName.at(-1) == ")") {
                 newPath = path.join(
-                    uploadPath,
+                    currentPath,
                     newName.substring(0, newName.length - 3) +
                         `(${i})` +
                         "." +
@@ -70,7 +117,7 @@ const fixFileName = (fileName, dir) => {
                 );
             } else {
                 newPath = path.join(
-                    uploadPath,
+                    currentPath,
                     newName + `(${i})` + "." + fileExt
                 );
             }
@@ -80,36 +127,37 @@ const fixFileName = (fileName, dir) => {
 };
 
 app.get("/", (req, res) => {
-    res.render("index.hbs", { data: getFiles(uploadPath) });
+    currentPath = path.join(uploadPath, req.query.path || "");
+    res.render("index.hbs", {
+        data: getFiles(currentPath),
+        path: getPathArray(currentPath),
+    });
 });
 
 app.post("/", (req, res) => {
-    /*Create new dir*/
-    console.log(req.body);
+        /*Create new dir*/
     if (req.body.request === "dir") {
-        const fileName = req.body.name;
-        const newPath = fixFileName(fileName, true);
+        const newPath = fixFileName(req.body.name, true);
         fs.mkdirSync(newPath);
-        return res.render("index.hbs", { data: getFiles(uploadPath) });
+        return res.render("index.hbs", {
+            data: getFiles(currentPath),
+            path: getPathArray(currentPath),
+        });
 
         /*Create new file*/
     } else if (req.body.request === "file") {
-        var fileName = req.body.name;
-
-        if (fileName.lastIndexOf(".") == fileName.length - 1) {
-            fileName = fileName.substring(0, fileName.lastIndexOf("."));
-        }
-
-        const newPath = fixFileName(fileName, false);
+        const newPath = fixFileName(req.body.name, false);
 
         fs.writeFileSync(newPath, "");
-        return res.render("index.hbs", { data: getFiles(uploadPath) });
+        return res.render("index.hbs", {
+            data: getFiles(currentPath),
+            path: getPathArray(currentPath),
+        });
 
         /*Remove file*/
     } else if (req.body.request === "remove") {
-        console.log(req.body);
         const fileName = req.body.name;
-        const newPath = path.join(uploadPath, fileName);
+        const newPath = path.join(currentPath, fileName);
 
         if (fs.existsSync(newPath)) {
             if (fs.lstatSync(newPath).isDirectory()) {
@@ -119,14 +167,17 @@ app.post("/", (req, res) => {
             }
         }
 
-        return res.render("index.hbs", { data: getFiles(uploadPath) });
+        return res.render("index.hbs", {
+            data: getFiles(currentPath),
+            path: getPathArray(currentPath),
+        });
 
         /*Add files from your computer*/
     } else {
         let form = formidable({
             multiples: true,
             keepExtensions: true,
-            uploadDir: uploadPath,
+            uploadDir: currentPath,
         });
 
         form.parse(req, (err, fields, files) => {
@@ -142,7 +193,10 @@ app.post("/", (req, res) => {
                 fs.renameSync(files.entities.path, newPath);
             }
 
-            return res.render("index.hbs", { data: getFiles(uploadPath) });
+            return res.render("index.hbs", {
+                data: getFiles(currentPath),
+                path: getPathArray(currentPath),
+            });
         });
     }
 });

@@ -1,4 +1,4 @@
-<aside class="d-flex flex-column align-items-center mh-100 px-3 py-1 bg-light">
+<aside class="d-flex flex-column align-items-center mh-100 px-3 py-1 bg-light w-25">
     <div class="form-group d-flex flex-column gap-3 mb-3 mt-3 w-100">
         <button
             class="btn btn-lg btn-outline-primary w-100"
@@ -34,78 +34,87 @@
         </form>
     </div>
 </aside>
-<div class="d-flex flex-wrap align-content-start">
-    {{#each data.dirs}}
-        <div class="custom-file m-3 position-relative p-2">
-            <form
-                action="/"
-                method="POST"
-                onsubmit="return confirmForm(this)"
-                class="d-flex flex-column align-items-center"
-            >
-                <input type="hidden" name="request" value="remove" />
-                <img width="50px" src="icons/dir-file.png" alt="folder image" />
-                <p class="text-center">{{this}}</p>
-                <button
-                    type="submit"
-                    name="name"
-                    value="{{this}}"
-                    class="btn btn-link position-absolute top-0 end-0"
+<div>
+    <p class="h5 pt-3 ps-3 fw-normal text-muted">
+        {{#each path}}
+            <a class="text-primary" href="/?path={{this.path}}">{{this.name}} </a> /
+        {{/each}}
+    </p>
+    <div class="d-flex flex-wrap align-content-start">
+        {{#each data.dirs}}
+            <div class="custom-file me-3 mb-3 position-relative p-2">
+                <form
+                    action="/"
+                    method="POST"
+                    onsubmit="return confirmForm(this)"
+                    class="d-flex flex-column align-items-center"
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        class="bi bi-trash3-fill"
-                        viewBox="0 0 16 16"
+                    <input type="hidden" name="request" value="remove" />
+                    <a href="/?path={{this.path}}">
+                        <img width="50px" src="icons/dir-file.png" alt="folder image" />
+                        <p class="text-center">{{this.name}}</p>
+                    </a>
+                    <button
+                        type="submit"
+                        name="name"
+                        value="{{this.name}}"
+                        class="btn btn-link position-absolute top-0 end-0"
                     >
-                        <path
-                            d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"
-                        />
-                    </svg>
-                </button>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            class="bi bi-trash3-fill"
+                            viewBox="0 0 16 16"
+                        >
+                            <path
+                                d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"
+                            />
+                        </svg>
+                    </button>
 
-            </form>
-        </div>
-    {{/each}}
-    {{#each data.files}}
-        <div class="custom-file m-3 position-relative p-2">
-            <form
-                action="/"
-                method="POST"
-                onsubmit="return confirmForm(this)"
-                class="d-flex flex-column align-items-center"
-            >
-                <input type="hidden" name="request" value="remove" />
-                <img
-                    width="50px"
-                    src="icons/{{getExtension this}}-file.png"
-                    alt="file image"
-                />
-                <p class="text-center">{{this}}</p>
-                <button
-                    class="btn btn-link position-absolute top-0 end-0"
-                    type="submit"
-                    name="name"
-                    value="{{this}}"
+                </form>
+            </div>
+        {{/each}}
+        {{#each data.files}}
+            <div class="custom-file me-3 mb-3 position-relative p-2">
+                <form
+                    action="/"
+                    method="POST"
+                    onsubmit="return confirmForm(this)"
+                    class="d-flex flex-column align-items-center"
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        class="bi bi-trash3-fill"
-                        viewBox="0 0 16 16"
+                    <input type="hidden" name="request" value="remove" />
+                    <img
+                        width="50px"
+                        src="icons/{{getExtension this}}-file.png"
+                        alt="file image"
+                    />
+                    <p class="text-center">{{this}}</p>
+                    <button
+                        class="btn btn-link position-absolute top-0 end-0"
+                        type="submit"
+                        name="name"
+                        value="{{this}}"
                     >
-                        <path
-                            d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"
-                        />
-                    </svg>
-                </button>
-            </form>
-        </div>
-    {{/each}}
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            class="bi bi-trash3-fill"
+                            viewBox="0 0 16 16"
+                        >
+                            <path
+                                d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"
+                            />
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        {{/each}}
+    </div>
 </div>
 <dialog class="border-0 rounded">
     <h2 class="display-5" id="submitHeading">Enter the name</h2>
