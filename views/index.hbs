@@ -1,4 +1,6 @@
-<aside class="d-flex flex-column align-items-center mh-100 px-3 py-1 bg-light w-25">
+<aside
+    class="d-flex flex-column align-items-center mh-100 px-3 py-1 bg-light w-25"
+>
     <div class="form-group d-flex flex-column gap-3 mb-3 mt-3 w-100">
         <button
             class="btn btn-lg btn-outline-primary w-100"
@@ -10,6 +12,13 @@
             id="file"
             type="submit"
         >New file</button>
+        {{#if (checkLength path)}}
+            <button
+                class="btn btn- btn-outline-secondary w-100"
+                id="change"
+                type="submit"
+            >Change name</button>
+        {{/if}}
     </div>
     <div class="w-100">
         <form
@@ -24,7 +33,7 @@
                 class="form-control"
                 multiple
                 required
-                name="entities"
+                name="files"
             />
             <button
                 id="upload"
@@ -37,7 +46,9 @@
 <div>
     <p class="h5 pt-3 ps-3 fw-normal text-muted">
         {{#each path}}
-            <a class="text-primary" href="/?path={{this.path}}">{{this.name}} </a> /
+            <a class="text-primary" href="/?path={{this.path}}">{{this.name}}
+            </a>
+            /
         {{/each}}
     </p>
     <div class="d-flex flex-wrap align-content-start">
@@ -51,7 +62,11 @@
                 >
                     <input type="hidden" name="request" value="remove" />
                     <a href="/?path={{this.path}}">
-                        <img width="50px" src="icons/dir-file.png" alt="folder image" />
+                        <img
+                            width="50px"
+                            src="icons/dir-file.png"
+                            alt="folder image"
+                        />
                         <p class="text-center">{{this.name}}</p>
                     </a>
                     <button
@@ -129,17 +144,17 @@
         />
         <div class="mt-2 d-flex gap-2 justify-content-end">
             <button
-                type="button"
-                id="cancel"
-                class="btn btn-sm btn-outline-primary"
-            >Cancel</button>
-            <button
                 type="submit"
                 name="request"
                 value=""
                 id="submit"
                 class="btn btn-sm btn-primary"
             >Confirm</button>
+            <button
+                type="button"
+                id="cancel"
+                class="btn btn-sm btn-outline-primary"
+            >Cancel</button>
         </div>
     </form>
 </dialog>

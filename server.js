@@ -42,9 +42,15 @@ app.engine(
         defaultLayout: "main.hbs",
         partialsDir: "views/partials",
         helpers: {
-            getExtension: (filename) => {
-                const extension = filename.split(".")[1] || " ";
+            getExtension: (fileName) => {
+                const extension = fileName.split(".")[1] || " ";
                 return fileExtensions.includes(extension) ? extension : "other";
+            },
+            checkLength: (path) => {
+                if (path.length == 1) {
+                    return false;
+                }
+                return true;
             },
         },
     })
@@ -93,8 +99,11 @@ const getPathArray = (newPath) => {
 };
 
 /*Add the (number) to the file when it already exists*/
-const fixFileName = (fileName, dir) => {
+const fixFileName = (fileName, dir, customPath="") => {
     var newPath = path.join(currentPath, fileName);
+    if(customPath != "") {
+        newPath = path.join(customPath, fileName);
+    }
     var newName = fileName.split(".")[0];
     var fileExt = fileName.split(".")[1] || "";
     var i = 0;
@@ -135,7 +144,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/", (req, res) => {
-        /*Create new dir*/
+    /*Create new dir*/
     if (req.body.request === "dir") {
         const newPath = fixFileName(req.body.name, true);
         fs.mkdirSync(newPath);
@@ -153,6 +162,23 @@ app.post("/", (req, res) => {
             data: getFiles(currentPath),
             path: getPathArray(currentPath),
         });
+
+        /*Change folder name*/
+    } else if (req.body.request === "change") {
+        const newPath = fixFileName(req.body.name, true, path.join(currentPath, "../"))
+
+        if (fs.existsSync(currentPath)) {
+            fs.rename(currentPath, newPath, (err) => {
+                if (err) console.log(err);
+                else {
+                    currentPath = newPath
+                    return res.render("index.hbs", {
+                        data: getFiles(currentPath),
+                        path: getPathArray(currentPath),
+                    });
+                }
+            });
+        }
 
         /*Remove file*/
     } else if (req.body.request === "remove") {
@@ -181,16 +207,16 @@ app.post("/", (req, res) => {
         });
 
         form.parse(req, (err, fields, files) => {
-            if (files.entities.length > 1) {
-                files.entities.forEach((file) => {
+            if (files.files.length > 1) {
+                files.files.forEach((file) => {
                     const newPath = fixFileName(file.name, false);
 
                     fs.renameSync(file.path, newPath);
                 });
             } else {
-                const newPath = fixFileName(files.entities.name, false);
+                const newPath = fixFileName(files.files.name, false);
 
-                fs.renameSync(files.entities.path, newPath);
+                fs.renameSync(files.files.path, newPath);
             }
 
             return res.render("index.hbs", {
