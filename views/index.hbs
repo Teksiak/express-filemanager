@@ -94,6 +94,17 @@
         {{/each}}
         {{#each data.files}}
             <div class="custom-file me-3 mb-3 position-relative p-2">
+                <form action="/" method="POST" onsubmit="/" class="d-flex flex-column align-items-center">
+                    <input type="hidden" name="request" value="edit" />
+                    <button type="submit" style="border: none; backgorund-color: transparent;">
+                        <img
+                            width="50px"
+                            src="icons/{{getExtension this}}-file.png"
+                            alt="file image"
+                        />
+                        <p class="text-center">{{this}}</p>
+                    </button>
+                </form>
                 <form
                     action="/"
                     method="POST"
@@ -101,12 +112,6 @@
                     class="d-flex flex-column align-items-center"
                 >
                     <input type="hidden" name="request" value="remove" />
-                    <img
-                        width="50px"
-                        src="icons/{{getExtension this}}-file.png"
-                        alt="file image"
-                    />
-                    <p class="text-center">{{this}}</p>
                     <button
                         class="btn btn-link position-absolute top-0 end-0"
                         type="submit"
@@ -134,14 +139,26 @@
 <dialog class="border-0 rounded">
     <h2 class="display-5" id="submitHeading">Enter the name</h2>
     <form method="POST" id="dialogForm">
-        <input
-            type="text"
-            name="name"
-            class="form-control"
-            id="name"
-            pattern="^[^<>:&#147\/\\|?*\x00-\x1F]+[^ .\\\/&#147]$"
-            required
-        />
+        <div class="input-group">
+            <input
+                type="text"
+                name="name"
+                class="form-control"
+                id="name"
+                pattern="^[^<>:&#147\/\\|?*\x00-\x1F]+[^ .\\\/&#147]$"
+                required
+            />
+            <div class="input-group-appended" id="extDiv">
+                <select name="extension" id="extSelect" class="form-select" style="border-top-left-radius: 0px !important; border-bottom-left-radius: 0px !important;">
+                    <option value=".txt" selected>.txt</option>
+                    <option value=".html">.html</option>
+                    <option value=".css">.css</option>
+                    <option value=".js">.js</option>
+                    <option value=".json">.json</option>
+                    <option value=".xml">.xml</option>
+                </select>
+            </div>
+        </div>
         <div class="mt-2 d-flex gap-2 justify-content-end">
             <button
                 type="submit"

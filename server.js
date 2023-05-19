@@ -28,6 +28,58 @@ const fileExtensions = [
     "zip",
 ];
 
+const fileSamples = {
+    txt: "This is your txt file.",
+    html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>This is your HTML page.</h1>
+</body>
+</html>
+    `,
+    css: `/* Applies to the entire body of the HTML document (except where overridden by more specific
+selectors). */
+body {
+    margin: 25px;
+    background-color: rgb(240,240,240);
+    font-family: arial, sans-serif;
+    font-size: 14px;
+}
+
+/* Applies to all <h1>...</h1> elements. */
+h1 {
+    font-size: 35px;
+    font-weight: normal;
+    margin-top: 5px;
+}
+
+/* Applies to all elements with <... class="someclass"> specified. */
+.someclass { color: red; }
+
+/* Applies to the element with <... id="someid"> specified. */
+#someid { color: green; }
+    `,
+    js: `console.log('This is your js file');`,
+    json: `{
+    "fruit": "Apple",
+    "size": "Large",
+    "color": "Red"
+}`,
+    xml: `<note>
+    <to>You</to>
+    <from>Andrew</from>
+    <heading>Hello</heading>
+    <body>This is your xml file!</body>
+</note>
+    `,
+};
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("static"));
 app.use("/css", express.static(__dirname + "/node_modules/bootstrap/dist/css"));
@@ -99,9 +151,9 @@ const getPathArray = (newPath) => {
 };
 
 /*Add the (number) to the file when it already exists*/
-const fixFileName = (fileName, dir, customPath="") => {
+const fixFileName = (fileName, dir, customPath = "") => {
     var newPath = path.join(currentPath, fileName);
-    if(customPath != "") {
+    if (customPath != "") {
         newPath = path.join(customPath, fileName);
     }
     var newName = fileName.split(".")[0];
@@ -155,9 +207,11 @@ app.post("/", (req, res) => {
 
         /*Create new file*/
     } else if (req.body.request === "file") {
-        const newPath = fixFileName(req.body.name, false);
+        console.log(req.body);
+        const newPath = fixFileName(req.body.name + req.body.extension, false);
 
         fs.writeFileSync(newPath, "");
+        fs.appendFileSync(newPath, fileSamples[req.body.extension.slice(1)]);
         return res.render("index.hbs", {
             data: getFiles(currentPath),
             path: getPathArray(currentPath),
@@ -165,13 +219,17 @@ app.post("/", (req, res) => {
 
         /*Change folder name*/
     } else if (req.body.request === "change") {
-        const newPath = fixFileName(req.body.name, true, path.join(currentPath, "../"))
+        const newPath = fixFileName(
+            req.body.name,
+            true,
+            path.join(currentPath, "../")
+        );
 
         if (fs.existsSync(currentPath)) {
             fs.rename(currentPath, newPath, (err) => {
                 if (err) console.log(err);
                 else {
-                    currentPath = newPath
+                    currentPath = newPath;
                     return res.render("index.hbs", {
                         data: getFiles(currentPath),
                         path: getPathArray(currentPath),

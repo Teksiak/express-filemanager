@@ -6,14 +6,18 @@ const dialog = document.querySelector("dialog");
 const cancelDialog = document.querySelector("button#cancel");
 const submitDialog = document.querySelector("button#submit");
 const dialogForm = document.querySelector("form#dialogForm");
+const extDiv = document.querySelector("div#extDiv")
 
 function showDialog(type) {
     if (type === "dir") {
         submitDialog.value = "dir";
+        extDiv.setAttribute('style', 'display: none;')
     } else if (type === "file") {
         submitDialog.value = "file";
+        extDiv.setAttribute('style', 'display: inherit;')
     } else if (type === "change") {
         submitDialog.value = "change";
+        extDiv.setAttribute('style', 'display: none;')
     }
     dialog.showModal();
 }
