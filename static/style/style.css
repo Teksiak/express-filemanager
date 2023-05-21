@@ -3,6 +3,28 @@
     height: 100px;
 }
 
+textarea {
+    line-height: 21px;
+    overflow-y: hidden;
+    padding: 0;
+    border: 0;
+    outline: none;
+    resize: none;
+}
+
+#numbers {
+    text-align: right;
+}
+
+#numbers span {
+    counter-increment: linenumber;
+}
+
+#numbers span::before {
+    content: counter(linenumber);
+    display: block;
+}
+
 aside {
     min-width: 25% !important;
     max-width: 300px !important;
@@ -10,5 +32,4 @@ aside {
 
 a {
     text-decoration: none !important;
-    color: inherit !important;
 }

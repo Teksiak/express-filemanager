@@ -67,7 +67,7 @@
                             src="icons/dir-file.png"
                             alt="folder image"
                         />
-                        <p class="text-center">{{this.name}}</p>
+                        <p class="text-center text-dark">{{this.name}}</p>
                     </a>
                     <button
                         type="submit"
@@ -94,9 +94,18 @@
         {{/each}}
         {{#each data.files}}
             <div class="custom-file me-3 mb-3 position-relative p-2">
-                <form action="/" method="POST" onsubmit="/" class="d-flex flex-column align-items-center">
+                <form
+                    action="/"
+                    method="POST"
+                    class="d-flex flex-column align-items-center"
+                >
                     <input type="hidden" name="request" value="edit" />
-                    <button type="submit" style="border: none; backgorund-color: transparent;">
+                    <button
+                        style="border: none; background-color: transparent;"
+                        type="submit"
+                        name="name"
+                        value="{{this}}"
+                    >
                         <img
                             width="50px"
                             src="icons/{{getExtension this}}-file.png"
@@ -149,7 +158,12 @@
                 required
             />
             <div class="input-group-appended" id="extDiv">
-                <select name="extension" id="extSelect" class="form-select" style="border-top-left-radius: 0px !important; border-bottom-left-radius: 0px !important;">
+                <select
+                    name="extension"
+                    id="extSelect"
+                    class="form-select"
+                    style="border-top-left-radius: 0px !important; border-bottom-left-radius: 0px !important;"
+                >
                     <option value=".txt" selected>.txt</option>
                     <option value=".html">.html</option>
                     <option value=".css">.css</option>

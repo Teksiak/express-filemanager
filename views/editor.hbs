@@ -1,0 +1,114 @@
+<aside
+    class="d-flex flex-column align-items-center mh-100 px-3 py-1 bg-light w-25"
+>
+    <div class="form-group d-flex flex-column gap-3 mb-3 mt-3 w-100">
+        <div>
+            <h3 class="display-5 mb-2" style="font-size: 42px !important;">View
+                settings</h3>
+            <div class="d-flex flex-row ps-1">
+                <div class="me-2">
+                    <p class="text-muted mb-1">Font size</p>
+                    <div class="input-group">
+                        <button class="btn btn-outline-secondary" id="decrease">-</button>
+                        <button class="btn btn-outline-secondary" id="increase">+</button>
+                    </div>
+                </div>
+                <div class="ms-2">
+                    <p class="text-muted mb-1">Color theme</p>
+                    <button class="btn btn-secondary" id="switch">Switch</button>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3
+                class="display-5 mb-2"
+                style="font-size: 42px !important;"
+            >Manage file</h3>
+            <div class="d-flex flex-column ps-1 gap-2">
+                <button
+                    class="btn btn-outline-secondary w-100"
+                    id="changefile"
+                    type="submit"
+                >Change name</button>
+                <a
+                    class="btn btn-lg btn-outline-primary w-100 normallink"
+                    target="_blank"
+                    href={{this.preview}}
+                >File preview</a>
+            </div>
+        </div>
+    </div>
+</aside>
+<div>
+    <p class="h5 pt-3 ps-3 fw-normal text-muted">
+        {{#each path}}
+            <a class="text-primary" href="/?path={{this.path}}">{{this.name}}
+            </a>
+            /
+        {{/each}}
+        <span class="text-muted">{{this.name}}</span>
+    </p>
+    <div class="d-flex flex-wrap align-content-start">
+        <form method="POST" class="ps-3">
+            <div id="editor" class="d-flex flex-row normal-theme p-1">
+                <div id="numbers" class="text-muted"></div>
+                <textarea
+                    name="contents"
+                    id="contents"
+                    cols="120"
+                    class="ps-2"
+                    style="font-size: 16px"
+                >{{contents}}</textarea>
+            </div>
+            <input type="hidden" name="name" value={{this.name}}>
+            <button type="submit" name="request" value="savefile" class="btn btn-outline-primary w-25 mt-3">Save file</button>
+        </form>
+    </div>
+</div>
+<dialog class="border-0 rounded">
+    <h2 class="display-5" id="submitHeading">Enter the name</h2>
+    <form method="POST" id="dialogForm">
+        <div class="input-group">
+            <input
+                type="text"
+                name="name"
+                class="form-control"
+                id="name"
+                pattern="^[^<>:&#147\/\\|?*\x00-\x1F]+[^ .\\\/&#147]$"
+                required
+            />
+            <input type="hidden" name="oldname" value={{this.name}}>
+            <div class="input-group-appended" id="extDiv">
+                <select
+                    name="extension"
+                    id="extSelect"
+                    class="form-select"
+                    style="border-top-left-radius: 0px !important; border-bottom-left-radius: 0px !important;"
+                >
+                    <option value=".txt" selected>.txt</option>
+                    <option value=".html">.html</option>
+                    <option value=".css">.css</option>
+                    <option value=".js">.js</option>
+                    <option value=".json">.json</option>
+                    <option value=".xml">.xml</option>
+                </select>
+            </div>
+        </div>
+        <div class="mt-2 d-flex gap-2 justify-content-end">
+            <button
+                type="submit"
+                name="request"
+                value=""
+                id="submit"
+                class="btn btn-sm btn-primary"
+            >Confirm</button>
+            <button
+                type="button"
+                id="cancel"
+                class="btn btn-sm btn-outline-primary"
+            >Cancel</button>
+        </div>
+    </form>
+</dialog>
+
+<script defer type="text/javascript" src="scripts/editor.js"></script>

@@ -30,54 +30,55 @@ const fileExtensions = [
 
 const fileSamples = {
     txt: "This is your txt file.",
-    html: `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>This is your HTML page.</h1>
-</body>
-</html>
-    `,
-    css: `/* Applies to the entire body of the HTML document (except where overridden by more specific
-selectors). */
-body {
-    margin: 25px;
-    background-color: rgb(240,240,240);
-    font-family: arial, sans-serif;
-    font-size: 14px;
-}
-
-/* Applies to all <h1>...</h1> elements. */
-h1 {
-    font-size: 35px;
-    font-weight: normal;
-    margin-top: 5px;
-}
-
-/* Applies to all elements with <... class="someclass"> specified. */
-.someclass { color: red; }
-
-/* Applies to the element with <... id="someid"> specified. */
-#someid { color: green; }
-    `,
-    js: `console.log('This is your js file');`,
-    json: `{
-    "fruit": "Apple",
-    "size": "Large",
-    "color": "Red"
-}`,
-    xml: `<note>
-    <to>You</to>
-    <from>Andrew</from>
-    <heading>Hello</heading>
-    <body>This is your xml file!</body>
-</note>
-    `,
+    html:
+        "<!DOCTYPE html>\n" +
+        '<html lang="en">\n' +
+        "<head>\n" +
+        '    <meta charset="UTF-8">\n' +
+        '    <meta http-equiv="X-UA-Compatible" content="IE=edge">\n' +
+        '    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+        "    <title>Document</title>\n" +
+        "</head>\n" +
+        "<body>\n" +
+        "    <h1>This is your HTML page.</h1>\n" +
+        "</body>\n" +
+        "</html>\n",
+    css:
+        "/* Applies to the entire body of the HTML document (except where overridden by more specific\n" +
+        "selectors). */\n" +
+        "body {\n" +
+        "    margin: 25px;\n" +
+        "    background-color: rgb(240,240,240);\n" +
+        "    font-family: arial, sans-serif;\n" +
+        "    font-size: 14px;\n" +
+        "}\n" +
+        "\n" +
+        "/* Applies to all <h1>...</h1> elements. */\n" +
+        "h1 {\n" +
+        "    font-size: 35px;\n" +
+        "    font-weight: normal;\n" +
+        "    margin-top: 5px;\n" +
+        "}\n" +
+        "\n" +
+        '/* Applies to all elements with <... class="someclass"> specified. */\n' +
+        ".someclass { color: red; }\n" +
+        "\n" +
+        '/* Applies to the element with <... id="someid"> specified. */\n' +
+        "#someid { color: green; }\n",
+    js: "console.log('This is your js file');",
+    json:
+        "{\n" +
+        '    "fruit": "Apple",\n' +
+        '    "size": "Large",\n' +
+        '    "color": "Red"\n' +
+        "}\n",
+    xml:
+        "<note>\n" +
+        "    <to>You</to>\n" +
+        "    <from>Andrew</from>\n" +
+        "    <heading>Hello</heading>\n" +
+        "    <body>This is your xml file!</body>\n" +
+        "</note>\n",
 };
 
 app.use(express.urlencoded({ extended: true }));
@@ -146,7 +147,6 @@ const getPathArray = (newPath) => {
     }
     data.push({ name: "Home", path: "/" });
     data.reverse();
-    console.log(data);
     return data;
 };
 
@@ -207,7 +207,6 @@ app.post("/", (req, res) => {
 
         /*Create new file*/
     } else if (req.body.request === "file") {
-        console.log(req.body);
         const newPath = fixFileName(req.body.name + req.body.extension, false);
 
         fs.writeFileSync(newPath, "");
@@ -237,6 +236,57 @@ app.post("/", (req, res) => {
                 }
             });
         }
+
+        /*Show file editor*/
+    } else if (req.body.request === "edit") {
+        const newPath = path.join(currentPath, req.body.name);
+        const data = fs.readFileSync(newPath, "utf8");
+        console.log(newPath);
+        return res.render("editor.hbs", {
+            path: getPathArray(currentPath),
+            preview: newPath,
+            name: req.body.name,
+            contents: data,
+        });
+
+        /*Change file name*/
+    } else if (req.body.request === "changefile") {
+        const newPath = fixFileName(
+            req.body.name+req.body.extension,
+            false,
+            currentPath
+        );
+        const oldPath = path.join(currentPath, req.body.oldname)
+
+        if (fs.existsSync(oldPath)) {
+            fs.rename(oldPath, newPath, (err) => {
+                if (err) console.log(err);
+                else {
+                    const data = fs.readFileSync(newPath, "utf8");
+                    return res.render("editor.hbs", {
+                        path: getPathArray(currentPath),
+                        preview: newPath,
+                        name: newPath.slice(newPath.lastIndexOf('\\')+1),
+                        contents: data,
+                    });
+                }
+            });
+        }
+
+        /*Save file*/
+    } else if (req.body.request === "savefile") {
+        console.log(req.body)
+        const newPath = path.join(currentPath, req.body.name)
+        if (fs.existsSync(newPath)) {
+            fs.writeFileSync(newPath, req.body.contents)
+        }
+
+        return res.render("editor.hbs", {
+            path: getPathArray(currentPath),
+            preview: newPath,
+            name: req.body.name,
+            contents: req.body.contents,
+        });
 
         /*Remove file*/
     } else if (req.body.request === "remove") {
