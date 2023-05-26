@@ -30,11 +30,15 @@
                     id="changefile"
                     type="submit"
                 >Change name</button>
-                <a
+                <form method="POST">
+                <button
                     class="btn btn-lg btn-outline-primary w-100 normallink"
                     target="_blank"
-                    href={{this.preview}}
-                >File preview</a>
+                    type="submit"
+                    name="request"
+                    value="preview"
+                >File preview</input>
+                </button>
             </div>
         </div>
     </div>
@@ -50,17 +54,17 @@
     </p>
     <div class="d-flex flex-wrap align-content-start">
         <form method="POST" class="ps-3">
-            <div id="editor" class="d-flex flex-row normal-theme p-1">
-                <div id="numbers" class="text-muted"></div>
+            <div id="editor" class="{{setEditorTheme theme}}">
+                <div id="numbers" class="{{setNumbersTheme theme}}" style="font-size: {{font}}px"></div>
                 <textarea
                     name="contents"
                     id="contents"
                     cols="120"
-                    class="ps-2"
-                    style="font-size: 16px"
+                    class="{{setAreaTheme theme}}"
+                    style="font-size: {{font}}px"
                 >{{contents}}</textarea>
             </div>
-            <input type="hidden" name="name" value={{this.name}}>
+            <input type="hidden" name="name" id="fileName" value={{this.name}}>
             <button type="submit" name="request" value="savefile" class="btn btn-outline-primary w-25 mt-3">Save file</button>
         </form>
     </div>

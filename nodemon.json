@@ -1,3 +1,4 @@
 {
-    "ext": "js,json,hbs,css"
+    "ext": "js,json,hbs,css",
+    "ignore": ["themes.json", "upload"]
 }
