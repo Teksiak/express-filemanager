@@ -1,0 +1,97 @@
+<aside
+    class="d-flex flex-column align-items-center mh-100 px-3 py-1 bg-light w-25"
+>
+    <div class="form-group d-flex flex-column gap-3 mb-3 mt-3 w-100">
+        <div>
+            <h3 class="display-5 mb-2" style="font-size: 42px !important;">Filters</h3>
+            <div class="d-flex flex-row ps-1 position-relative">
+                <div class="me-2">
+                <button
+                    class="btn btn-outline-secondary"
+                    id="showfilters"
+                    type="submit"
+                >Filters</button>
+                <div id="filters-div" class="d-flex flex-row flex-wrap gap-3 mt-2 position-absolute" style="left: -300px">
+                    {{#each filters}}
+                        <div class="d-flex flex-column align-items-center" id="{{this}}" style="cursor: pointer;">
+                            <img src={{../view}} alt="fimg" style="width: 50px; filter: {{this}}(100%)">
+                            <p>{{this}}</p>
+                        </div>
+                    {{/each}}
+                </div>
+                </div>
+            </div>
+        </div>
+        <div id="second-div">
+            <h3
+                class="display-5 mb-2"
+                style="font-size: 42px !important;"
+            >Manage file</h3>
+            <div class="d-flex flex-column ps-1 gap-2">
+                <button
+                    class="btn btn-outline-secondary w-100"
+                    id="changefile"
+                    type="submit"
+                >Change name</button>
+                <form method="POST" class="m-0">
+                    <input type="hidden" name="name" value={{name}} id="file-name" />
+                    <button
+                        class="btn btn-lg btn-outline-primary w-100 normallink"
+                        target="_blank"
+                        type="submit"
+                        name="request"
+                        value="preview"
+                    >File preview
+                    </button>
+                </form>
+                <button type="submit" class="btn btn-primary w-100" id="save-button">Save file</button>
+            </div>
+        </div>
+    </div>
+</aside>
+<div class="w-100">
+    <p class="h5 pt-3 ps-3 fw-normal text-muted">
+        {{#each path}}
+            <a class="text-primary" href="/?path={{this.path}}">{{this.name}}
+            </a>
+            /
+        {{/each}}
+        <span class="text-muted">{{this.name}}</span>
+    </p>
+    <div class="d-flex flex-column align-content-start">
+            <div id="editor" class="d-flex justify-content-center w-100">
+                <img id="main-image" src={{view}} alt="image" class="w-25">
+            </div>
+    </div>
+</div>
+<dialog class="border-0 rounded">
+    <h2 class="display-5" id="submitHeading">Enter the name</h2>
+    <form method="POST" id="dialogForm">
+        <input
+            type="text"
+            name="name"
+            class="form-control"
+            id="name"
+            pattern="^[^<>:&#147\/\\|?*\x00-\x1F]+[^ .\\\/&#147]$"
+            required
+        />
+        <input type="hidden" name="oldname" value={{this.name}}>
+        <input type="hidden" name="extension" value={{getExtension name}}>
+        <div class="mt-2 d-flex gap-2 justify-content-end">
+            <button
+                type="submit"
+                name="request"
+                value=""
+                id="submit"
+                class="btn btn-sm btn-primary"
+            >Confirm</button>
+            <button
+                type="button"
+                id="cancel"
+                class="btn btn-sm btn-outline-primary"
+            >Cancel</button>
+        </div>
+    </form>
+</dialog>
+
+<script defer type="text/javascript" src="scripts/editorimg.js"></script>

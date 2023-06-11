@@ -9,13 +9,22 @@
                 <div class="me-2">
                     <p class="text-muted mb-1">Font size</p>
                     <div class="input-group">
-                        <button class="btn btn-outline-secondary" id="decrease">-</button>
-                        <button class="btn btn-outline-secondary" id="increase">+</button>
+                        <button
+                            class="btn btn-outline-secondary"
+                            id="decrease"
+                        >-</button>
+                        <button
+                            class="btn btn-outline-secondary"
+                            id="increase"
+                        >+</button>
                     </div>
                 </div>
                 <div class="ms-2">
                     <p class="text-muted mb-1">Color theme</p>
-                    <button class="btn btn-secondary" id="switch">Switch</button>
+                    <button
+                        class="btn btn-secondary"
+                        id="switch"
+                    >Switch</button>
                 </div>
             </div>
         </div>
@@ -31,14 +40,16 @@
                     type="submit"
                 >Change name</button>
                 <form method="POST">
-                <button
-                    class="btn btn-lg btn-outline-primary w-100 normallink"
-                    target="_blank"
-                    type="submit"
-                    name="request"
-                    value="preview"
-                >File preview</input>
-                </button>
+                    <input type="hidden" name="name" value={{name}} />
+                    <button
+                        class="btn btn-lg btn-outline-primary w-100 normallink"
+                        target="_blank"
+                        type="submit"
+                        name="request"
+                        value="preview"
+                    >File preview
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -55,7 +66,11 @@
     <div class="d-flex flex-wrap align-content-start">
         <form method="POST" class="ps-3">
             <div id="editor" class="{{setEditorTheme theme}}">
-                <div id="numbers" class="{{setNumbersTheme theme}}" style="font-size: {{font}}px"></div>
+                <div
+                    id="numbers"
+                    class="{{setNumbersTheme theme}}"
+                    style="font-size: {{font}}px"
+                ></div>
                 <textarea
                     name="contents"
                     id="contents"
@@ -64,8 +79,18 @@
                     style="font-size: {{font}}px"
                 >{{contents}}</textarea>
             </div>
-            <input type="hidden" name="name" id="fileName" value={{this.name}}>
-            <button type="submit" name="request" value="savefile" class="btn btn-outline-primary w-25 mt-3">Save file</button>
+            <input
+                type="hidden"
+                name="name"
+                id="fileName"
+                value={{this.name}}
+            />
+            <button
+                type="submit"
+                name="request"
+                value="savefile"
+                class="btn btn-outline-primary w-25 mt-3 ms-4"
+            >Save file</button>
         </form>
     </div>
 </div>
@@ -81,7 +106,7 @@
                 pattern="^[^<>:&#147\/\\|?*\x00-\x1F]+[^ .\\\/&#147]$"
                 required
             />
-            <input type="hidden" name="oldname" value={{this.name}}>
+            <input type="hidden" name="oldname" value={{this.name}} />
             <div class="input-group-appended" id="extDiv">
                 <select
                     name="extension"
@@ -89,12 +114,12 @@
                     class="form-select"
                     style="border-top-left-radius: 0px !important; border-bottom-left-radius: 0px !important;"
                 >
-                    <option value=".txt" selected>.txt</option>
-                    <option value=".html">.html</option>
-                    <option value=".css">.css</option>
-                    <option value=".js">.js</option>
-                    <option value=".json">.json</option>
-                    <option value=".xml">.xml</option>
+                    <option value="txt" selected>.txt</option>
+                    <option value="html">.html</option>
+                    <option value="css">.css</option>
+                    <option value="js">.js</option>
+                    <option value="json">.json</option>
+                    <option value="xml">.xml</option>
                 </select>
             </div>
         </div>

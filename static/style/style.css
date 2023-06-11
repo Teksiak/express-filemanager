@@ -3,6 +3,14 @@
     height: 100px;
 }
 
+#filters-div, #second-div {
+    transition: all .5s ease-in-out;
+}
+
+#second-div {
+    transition-delay: .1s;
+}
+
 textarea {
     line-height: 21px;
     overflow-y: hidden;

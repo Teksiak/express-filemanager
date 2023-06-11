@@ -1,26 +1,18 @@
 {
-    "C:\\Users\\3pa\\Desktop\\Express\\express-filemanager\\upload\\sss\\ssss\\adad.txt": {
+    "C:\\Users\\wojte\\OneDrive\\Pulpit\\Projects\\express-filemanager\\upload\\asda.txt": {
         "theme": "dark-theme",
-        "font": 22
-    },
-    "C:\\Users\\3pa\\Desktop\\Express\\express-filemanager\\upload\\nnn.html": {
-        "theme": "contrast-theme",
-        "font": 28
-    },
-    "C:\\Users\\3pa\\Desktop\\Express\\express-filemanager\\upload\\zzz.txt": {
-        "theme": "normal-theme",
-        "font": 16
-    },
-    "C:\\Users\\3pa\\Desktop\\Express\\express-filemanager\\upload\\aa.txt": {
-        "theme": "contrast-theme",
-        "font": 16
-    },
-    "C:\\Users\\3pa\\Desktop\\Express\\express-filemanager\\upload\\asdasdasd.txt": {
-        "theme": "dark-theme",
-        "font": 16
-    },
-    "C:\\Users\\3pa\\Desktop\\Express\\express-filemanager\\upload\\aaaaaaaaaaaaaaaa.txt": {
-        "theme": "contrast-theme",
         "font": 20
+    },
+    "C:\\Users\\wojte\\OneDrive\\Pulpit\\Projects\\express-filemanager\\upload\\aaaa.txt": {
+        "theme": "dark-theme",
+        "font": 20
+    },
+    "C:\\Users\\wojte\\OneDrive\\Pulpit\\Projects\\express-filemanager\\static\\upload\\aaaa.txt": {
+        "theme": "dark-theme",
+        "font": 16
+    },
+    "C:\\Users\\wojte\\OneDrive\\Pulpit\\Projects\\express-filemanager\\static\\upload\\ddddd.txt": {
+        "theme": "dark-theme",
+        "font": 16
     }
 }

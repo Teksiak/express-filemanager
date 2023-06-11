@@ -28,6 +28,8 @@ const fileExtensions = [
     "zip",
 ];
 
+const supportedImages = ["jpg", "png"]
+
 const fileSamples = {
     txt: "This is your txt file.",
     html:
@@ -81,8 +83,11 @@ const fileSamples = {
         "</note>\n",
 };
 
+const filters = ['grayscale', 'invert', 'sepia', 'none']
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static("upload"));
 app.use(express.static("static"));
 app.use("/css", express.static(__dirname + "/node_modules/bootstrap/dist/css"));
 
@@ -139,6 +144,7 @@ app.engine(
 
 const uploadPath = path.join(__dirname, "upload");
 var currentPath = path.join(__dirname, "upload");
+
 if (!fs.existsSync(uploadPath)) {
     fs.mkdirSync(uploadPath);
 }
@@ -269,28 +275,42 @@ app.post("/", (req, res) => {
         /*Show file editor*/
     } else if (req.body.request === "edit") {
         const newPath = path.join(currentPath, req.body.name);
-        const data = fs.readFileSync(newPath, "utf8");
-        const theme = JSON.parse(
-            fs.readFileSync(path.join(__dirname, "static/themes.json"), "utf8")
-        );
-        if (theme[newPath]) {
-            return res.render("editor.hbs", {
+        const extension = req.body.name.split(".")[1]
+        if(supportedImages.includes(extension)) {
+            const view = newPath.split("\\upload")[1]
+            return res.render("editorimg.hbs", {
                 path: getPathArray(currentPath),
                 preview: newPath,
                 name: req.body.name,
-                contents: data,
-                theme: theme[newPath].theme || "normal-theme",
-                font: theme[newPath].font || 16,
+                view: view.replaceAll("\\", "/"),
+                filters: filters
             });
-        } else {
-            return res.render("editor.hbs", {
-                path: getPathArray(currentPath),
-                preview: newPath,
-                name: req.body.name,
-                contents: data,
-                theme: "normal-theme",
-                font: 16,
-            });
+        }
+        else {
+            const data = fs.readFileSync(newPath, "utf8");
+            const theme = JSON.parse(
+                fs.readFileSync(path.join(__dirname, "static/themes.json"), "utf8")
+            );
+
+            if (theme[newPath]) {
+                return res.render("editor.hbs", {
+                    path: getPathArray(currentPath),
+                    preview: newPath,
+                    name: req.body.name,
+                    contents: data,
+                    theme: theme[newPath].theme,
+                    font: theme[newPath].font,
+                });
+            } else {
+                return res.render("editor.hbs", {
+                    path: getPathArray(currentPath),
+                    preview: newPath,
+                    name: req.body.name,
+                    contents: data,
+                    theme: "normal-theme",
+                    font: 16,
+                });
+            }
         }
 
         /*File preview*/
@@ -302,7 +322,7 @@ app.post("/", (req, res) => {
         /*Change file name*/
     } else if (req.body.request === "changefile") {
         const newPath = fixFileName(
-            req.body.name + req.body.extension,
+            req.body.name + "." + req.body.extension,
             false,
             currentPath
         );
@@ -316,25 +336,37 @@ app.post("/", (req, res) => {
             fs.rename(oldPath, newPath, (err) => {
                 if (err) console.log(err);
                 else {
-                    const data = fs.readFileSync(newPath, "utf8");
-                    if (theme[newPath]) {
-                        return res.render("editor.hbs", {
+                    if(supportedImages.includes(req.body.extension)) {
+                        const view = newPath.split("\\upload")[1]
+                        return res.render("editorimg.hbs", {
                             path: getPathArray(currentPath),
                             preview: newPath,
                             name: newPath.slice(newPath.lastIndexOf("\\") + 1),
-                            contents: data,
-                            theme: theme[newPath].theme || "normal-theme",
-                            font: theme[newPath].font || 16,
+                            view: view,
+                            filters: filters,
                         });
-                    } else {
-                        return res.render("editor.hbs", {
-                            path: getPathArray(currentPath),
-                            preview: newPath,
-                            name: newPath.slice(newPath.lastIndexOf("\\") + 1),
-                            contents: data,
-                            theme: "normal-theme",
-                            font: 16,
-                        });
+                    }
+                    else {
+                        const data = fs.readFileSync(newPath, "utf8");
+                        if (theme[newPath]) {
+                            return res.render("editor.hbs", {
+                                path: getPathArray(currentPath),
+                                preview: newPath,
+                                name: newPath.slice(newPath.lastIndexOf("\\") + 1),
+                                contents: data,
+                                theme: theme[newPath].theme || "normal-theme",
+                                font: theme[newPath].font || 16,
+                            });
+                        } else {
+                            return res.render("editor.hbs", {
+                                path: getPathArray(currentPath),
+                                preview: newPath,
+                                name: newPath.slice(newPath.lastIndexOf("\\") + 1),
+                                contents: data,
+                                theme: "normal-theme",
+                                font: 16,
+                            });
+                        }
                     }
                 }
             });
@@ -370,15 +402,34 @@ app.post("/", (req, res) => {
             });
         }
 
+        /*Save image*/
+    } else if (req.body.request === "saveimage") {
+        const newPath = path.join(currentPath, req.body.name);
+        const buffer = Buffer.from(req.body.dataUrl.split(",")[1], 'base64')
+        fs.unlinkSync(newPath)
+        fs.writeFileSync(newPath, buffer);
+
+        const view = newPath.split("\\upload")[1]
+        return res.render("editorimg.hbs", {
+            path: getPathArray(currentPath),
+            preview: newPath,
+            name: req.body.name,
+            view: view,
+            filters: filters
+        });
+
         /*Save file theme*/
     } else if (req.body.request === "savetheme") {
         const newPath = path.join(currentPath, req.body.name);
-        console.log(currentPath);
         const themePath = path.join(__dirname, "static/themes.json");
         if (fs.existsSync(themePath)) {
             let data = JSON.parse(fs.readFileSync(themePath, "utf8"));
+            let temptheme = undefined
+            try {
+                temptheme = req.body.theme || data[newPath].theme
+            } catch {}
             data[newPath] = {
-                theme: req.body.theme || data[newPath].theme,
+                theme: temptheme || "normal-theme",
                 font: req.body.font || data[newPath].font,
             };
             fs.writeFileSync(themePath, JSON.stringify(data, null, 4));
